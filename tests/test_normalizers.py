@@ -100,6 +100,74 @@ class TestIsFrontendAddon:
         assert not result
 
 
+class TestIsNickAddon:
+    def test_plone_nick_name_prefix_is_kept(self):
+        # setup
+        packument = {'name': '@plone/nick-blog', 'dist-tags': {'latest': '1.0.0'},
+                     'versions': {'1.0.0': {}}}
+
+        # do it / postcondition
+        assert NpmNormalizer.is_nick_addon(packument)
+        assert NpmNormalizer.is_frontend_addon(packument)
+
+    def test_nick_addon_keyword_is_kept(self):
+        # setup
+        packument = {'name': 'community-nick-thing', 'dist-tags': {'latest': '1.0.0'},
+                     'versions': {'1.0.0': {'keywords': ['nick-addon']}}}
+
+        # do it / postcondition
+        assert NpmNormalizer.is_nick_addon(packument)
+
+    def test_nick_plus_cms_keywords_are_kept(self):
+        # setup
+        packument = {'name': 'some-blog', 'dist-tags': {'latest': '1.0.0'},
+                     'versions': {'1.0.0': {'keywords': ['nick', 'blog', 'cms']}}}
+
+        # do it / postcondition
+        assert NpmNormalizer.is_nick_addon(packument)
+
+    def test_nick_peer_dependency_is_kept(self):
+        # setup
+        packument = {'name': 'some-extension', 'dist-tags': {'latest': '1.0.0'},
+                     'versions': {'1.0.0': {'peerDependencies': {'@plone/nick': '^1.0.0'}}}}
+
+        # do it / postcondition
+        assert NpmNormalizer.is_nick_addon(packument)
+
+    def test_irc_nick_package_is_dropped(self):
+        # setup
+        packument = {'name': 'nickserv', 'dist-tags': {'latest': '1.0.0'},
+                     'versions': {'1.0.0': {'keywords': ['irc', 'nickserv', 'nick']}}}
+
+        # do it / postcondition
+        assert not NpmNormalizer.is_nick_addon(packument)
+        assert not NpmNormalizer.is_frontend_addon(packument)
+
+    def test_normalize_tags_nick_addons_with_the_category(self):
+        # setup
+        packument = {'name': '@plone/nick-blog', 'dist-tags': {'latest': '1.0.0'},
+                     'versions': {'1.0.0': {'description': 'Blog for Nick', 'keywords': ['nick', 'cms']}},
+                     'time': {'1.0.0': '2026-01-01T00:00:00Z'}}
+
+        # do it
+        addon = NpmNormalizer().normalize(packument)
+
+        # postcondition
+        assert addon['categories'] == ['nick']
+
+    def test_normalize_leaves_volto_addons_uncategorised(self):
+        # setup
+        packument = {'name': '@scope/volto-thing', 'dist-tags': {'latest': '1.0.0'},
+                     'versions': {'1.0.0': {'keywords': ['volto-addon']}},
+                     'time': {'1.0.0': '2026-01-01T00:00:00Z'}}
+
+        # do it
+        addon = NpmNormalizer().normalize(packument)
+
+        # postcondition
+        assert addon['categories'] == []
+
+
 class TestPyPINormalize:
     def test_maps_core_fields_and_plone_versions(self):
         # setup

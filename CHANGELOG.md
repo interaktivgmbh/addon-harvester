@@ -5,6 +5,16 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Nick ([plone/nick](https://github.com/plone/nick), headless CMS in TypeScript) support
+  for the npm source: new default search queries (`keywords:nick-addon`, `keywords:nick`)
+  and a strict keep-filter (explicit `nick-addon` keyword, `nick`+`cms` keyword pair,
+  `@plone/nick` dependency or `@plone/nick-*` name) so IRC/nickname noise on the bare
+  `nick` keyword is dropped. Matching add-ons are tagged with the `nick` category.
+
 ## [1.0.1] - 2026-06-11
 
 ### Added

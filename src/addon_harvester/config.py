@@ -33,12 +33,20 @@ DEFAULT_NPM_QUERIES = (
     'keywords:volto',
     'keywords:aurora-addon',
     'keywords:plone-aurora',
+    'keywords:nick-addon',
+    'keywords:nick',
 )
 
 NPM_VOLTO_PEER = '@plone/volto'
 NPM_AURORA_PEER = '@plone/aurora'
+NPM_NICK_PEER = '@plone/nick'
 NPM_ADDON_PEERS = (NPM_VOLTO_PEER, NPM_AURORA_PEER)
 NPM_ADDON_KEYWORDS = ('volto', 'volto-addon', 'aurora-addon', 'plone-aurora', 'plone')
+
+NPM_NICK_KEYWORD = 'nick-addon'
+NPM_NICK_KEYWORD_PAIR = ('nick', 'cms')
+NPM_NICK_NAME_PREFIX = '@plone/nick'
+NICK_CATEGORY = 'nick'
 
 GITHUB_GRAPHQL_URL = 'https://api.github.com/graphql'
 GITHUB_TOKEN_ENV = ('GITHUB_TOKEN', 'GH_TOKEN')

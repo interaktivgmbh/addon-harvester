@@ -13,10 +13,12 @@ classifiers = [
 [npm]
 # Registry search queries (https://registry.npmjs.org/-/v1/search syntax); results
 # are unioned. Search noise is dropped afterwards by the is_frontend_addon heuristic
-# (name, keywords, @plone/volto / @plone/aurora peer dependencies).
+# (name, keywords, @plone/volto / @plone/aurora peer dependencies, Nick markers).
 queries = [
     "keywords:volto-addon",
     "keywords:volto",
     "keywords:aurora-addon",
     "keywords:plone-aurora",
+    "keywords:nick-addon",
+    "keywords:nick",
 ]

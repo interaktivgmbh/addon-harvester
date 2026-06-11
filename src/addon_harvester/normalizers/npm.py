@@ -2,7 +2,17 @@ import re
 from typing import Any, Dict, List, Optional
 
 from .base import Normalizer
-from ..config import DEFAULT_TRUST, NPM_ADDON_KEYWORDS, NPM_ADDON_PEERS, NPM_VOLTO_PEER
+from ..config import (
+    DEFAULT_TRUST,
+    NICK_CATEGORY,
+    NPM_ADDON_KEYWORDS,
+    NPM_ADDON_PEERS,
+    NPM_NICK_KEYWORD,
+    NPM_NICK_KEYWORD_PAIR,
+    NPM_NICK_NAME_PREFIX,
+    NPM_NICK_PEER,
+    NPM_VOLTO_PEER,
+)
 from ..types import TAddon, TCompat, TDownloads
 
 
@@ -11,7 +21,7 @@ class NpmNormalizer(Normalizer):
 
     @classmethod
     def is_frontend_addon(cls, packument: Dict[str, Any]) -> bool:
-        """Keep genuine Volto/Aurora add-ons and drop registry-search noise."""
+        """Keep genuine Volto/Aurora/Nick add-ons and drop registry-search noise."""
         name = (packument.get('name') or '').lower()
 
         if 'volto' in name:
@@ -26,6 +36,25 @@ class NpmNormalizer(Normalizer):
         for group in ('peerDependencies', 'dependencies'):
             deps = version.get(group) or {}
             if any(peer in deps for peer in NPM_ADDON_PEERS):
+                return True
+
+        return cls.is_nick_addon(packument)
+
+    @classmethod
+    def is_nick_addon(cls, packument: Dict[str, Any]) -> bool:
+        """Nick (plone/nick) add-ons via unambiguous markers — the bare ``nick`` keyword is IRC noise."""
+        name = (packument.get('name') or '').lower()
+        if name.startswith(NPM_NICK_NAME_PREFIX):
+            return True
+
+        version = cls._latest_version(packument)
+        keywords = {k.lower() for k in version.get('keywords') or []}
+
+        if NPM_NICK_KEYWORD in keywords or keywords.issuperset(NPM_NICK_KEYWORD_PAIR):
+            return True
+
+        for group in ('peerDependencies', 'dependencies'):
+            if NPM_NICK_PEER in (version.get(group) or {}):
                 return True
 
         return False
@@ -48,7 +77,7 @@ class NpmNormalizer(Normalizer):
             title=self._humanize_title(name),
             summary=(version.get('description') or '').strip(),
             description=self._clean_description(raw_readme),
-            categories=[],
+            categories=[NICK_CATEGORY] if self.is_nick_addon(packument) else [],
             keywords=keywords,
             latest_version=latest or '',
             version_sortable=version_sortable,
