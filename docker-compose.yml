@@ -1,0 +1,15 @@
+services:
+  harvester:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      HARVEST_ARGS: -v --with-github --workers=16
+    volumes:
+      - ./data:/data
+      - ./harvest.toml:/app/harvest.toml:ro  # classifier list, editable without rebuild
+      - ./secrets/gcp-key.json:/secrets/gcp-key.json:ro  # Big Query for PyPi Data
+    restart: unless-stopped

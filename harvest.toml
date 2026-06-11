@@ -1,0 +1,22 @@
+# Harvest configuration — the search terms per registry, read by main.py
+# (override the path with --config). A repeatable --classifier flag ignores
+# the [pypi] list entirely.
+
+[pypi]
+# Trove classifiers to harvest. A package is kept when it carries at least one of
+# them — either exactly or as a "<classifier> :: ..." prefix (so "Framework :: Plone"
+# also matches "Framework :: Plone :: 6.1").
+classifiers = [
+    "Framework :: Plone",
+]
+
+[npm]
+# Registry search queries (https://registry.npmjs.org/-/v1/search syntax); results
+# are unioned. Search noise is dropped afterwards by the is_frontend_addon heuristic
+# (name, keywords, @plone/volto / @plone/aurora peer dependencies).
+queries = [
+    "keywords:volto-addon",
+    "keywords:volto",
+    "keywords:aurora-addon",
+    "keywords:plone-aurora",
+]

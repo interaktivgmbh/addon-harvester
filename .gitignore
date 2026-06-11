@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+
+# Editors
+.idea/
+.vscode/
+
+# Secrets
+.env
+.env.*
+!.env.sample
+
+# Harvest output
+index.json
+*.index.json
+var/
+data/
+
+# Secrets
+secrets/

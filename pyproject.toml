@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "addon-harvester"
+dynamic = ["version"]
+description = "Harvest add-on metadata from PyPI (by trove classifier) and npm into a normalised JSON snapshot — ships with a Plone/Volto profile."
+readme = "README.md"
+requires-python = ">=3.14"
+license = { text = "LGPL-3.0-only" }
+authors = [
+    { name = "Lukas Guziel", email = "guziel@interaktiv.de" },
+    { name = "Braun", email = "braun@interaktiv.de" },
+    { name = "Kühnapfel", email = "kuehnapfel@interaktiv.de" },
+]
+maintainers = [
+    { name = "Interaktiv GmbH", email = "support@interaktiv.de" },
+]
+keywords = ["addon", "harvester", "metadata", "PyPI", "npm", "Plone", "Volto", "Aurora"]
+classifiers = [
+    "Private :: Do Not Upload",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+    "Framework :: Plone",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-cov",
+    "ruff",
+]
+
+[project.urls]
+Repository = "https://github.com/interaktivgmbh/addon-harvester"
+Issues = "https://github.com/interaktivgmbh/addon-harvester/issues"
+Changelog = "https://github.com/interaktivgmbh/addon-harvester/blob/main/CHANGELOG.md"
+
+[tool.setuptools.dynamic]
+version = { attr = "addon_harvester.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 120
+target-version = "py314"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]

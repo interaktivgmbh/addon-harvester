@@ -1,0 +1,2 @@
+# Refresh the harvest data every 4 hours; output goes to the container log (PID 1 stdout).
+0 */4 * * * root /app/docker/harvest.sh >> /proc/1/fd/1 2>&1
