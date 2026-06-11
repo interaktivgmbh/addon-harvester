@@ -1,18 +1,8 @@
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from .base import Normalizer
-from ..config import (
-    DEFAULT_TRUST,
-    NICK_CATEGORY,
-    NPM_ADDON_KEYWORDS,
-    NPM_ADDON_PEERS,
-    NPM_NICK_KEYWORD,
-    NPM_NICK_KEYWORD_PAIR,
-    NPM_NICK_NAME_PREFIX,
-    NPM_NICK_PEER,
-    NPM_VOLTO_PEER,
-)
+from ..config import DEFAULT_TRUST, NPM_ECOSYSTEMS, NPM_GENERIC_KEYWORDS, NPM_VOLTO_PEER
 from ..types import TAddon, TCompat, TDownloads
 
 
@@ -21,43 +11,39 @@ class NpmNormalizer(Normalizer):
 
     @classmethod
     def is_frontend_addon(cls, packument: Dict[str, Any]) -> bool:
-        """Keep genuine Volto/Aurora/Nick add-ons and drop registry-search noise."""
-        name = (packument.get('name') or '').lower()
-
-        if 'volto' in name:
-            return True
-
+        """Keep packages matching an ecosystem (or a generic keyword); drop registry-search noise."""
         version = cls._latest_version(packument)
         keywords = {k.lower() for k in version.get('keywords') or []}
 
-        if keywords.intersection(NPM_ADDON_KEYWORDS):
+        if keywords.intersection(NPM_GENERIC_KEYWORDS):
             return True
 
-        for group in ('peerDependencies', 'dependencies'):
-            deps = version.get(group) or {}
-            if any(peer in deps for peer in NPM_ADDON_PEERS):
-                return True
-
-        return cls.is_nick_addon(packument)
+        return bool(cls.ecosystems(packument))
 
     @classmethod
-    def is_nick_addon(cls, packument: Dict[str, Any]) -> bool:
-        """Nick (plone/nick) add-ons via unambiguous markers — the bare ``nick`` keyword is IRC noise."""
+    def ecosystems(cls, packument: Dict[str, Any]) -> List[str]:
+        """Ecosystems (``volto`` / ``aurora`` / ``nick``) whose markers the package matches."""
         name = (packument.get('name') or '').lower()
-        if name.startswith(NPM_NICK_NAME_PREFIX):
-            return True
-
         version = cls._latest_version(packument)
         keywords = {k.lower() for k in version.get('keywords') or []}
-
-        if NPM_NICK_KEYWORD in keywords or keywords.issuperset(NPM_NICK_KEYWORD_PAIR):
-            return True
-
+        dependencies = set()
         for group in ('peerDependencies', 'dependencies'):
-            if NPM_NICK_PEER in (version.get(group) or {}):
-                return True
+            dependencies.update(version.get(group) or {})
 
-        return False
+        return [ecosystem for ecosystem, markers in NPM_ECOSYSTEMS.items()
+                if cls._matches(markers, name, keywords, dependencies)]
+
+    @staticmethod
+    def _matches(markers: Dict[str, Tuple], name: str, keywords: set, dependencies: set) -> bool:
+        if any(part in name for part in markers.get('name_contains', ())):
+            return True
+        if any(name.startswith(prefix) for prefix in markers.get('name_prefixes', ())):
+            return True
+        if keywords.intersection(markers.get('keywords_any', ())):
+            return True
+        if any(keywords.issuperset(group) for group in markers.get('keywords_all', ())):
+            return True
+        return bool(dependencies.intersection(markers.get('peers', ())))
 
     def normalize(self, data: Dict[str, Any], downloads: Optional[TDownloads] = None,
                   dependents: Optional[int] = None, insecure: Optional[bool] = None) -> TAddon:
@@ -77,7 +63,7 @@ class NpmNormalizer(Normalizer):
             title=self._humanize_title(name),
             summary=(version.get('description') or '').strip(),
             description=self._clean_description(raw_readme),
-            categories=[NICK_CATEGORY] if self.is_nick_addon(packument) else [],
+            categories=self.ecosystems(packument),
             keywords=keywords,
             latest_version=latest or '',
             version_sortable=version_sortable,

@@ -9,11 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Nick ([plone/nick](https://github.com/plone/nick), headless CMS in TypeScript) support
-  for the npm source: new default search queries (`keywords:nick-addon`, `keywords:nick`)
-  and a strict keep-filter (explicit `nick-addon` keyword, `nick`+`cms` keyword pair,
-  `@plone/nick` dependency or `@plone/nick-*` name) so IRC/nickname noise on the bare
-  `nick` keyword is dropped. Matching add-ons are tagged with the `nick` category.
+- Ecosystem marker table for the npm source (`NPM_ECOSYSTEMS`): the keep-filter and the
+  addon `categories` (now `volto` / `aurora` / `nick` per matched ecosystem) derive from
+  one config table instead of hard-coded checks.
+- Nick ([plone/nick](https://github.com/plone/nick), headless CMS in TypeScript) as a new
+  ecosystem: default search queries (`keywords:nick-addon`, `keywords:nick`) plus strict
+  markers (explicit `nick-addon` keyword, `nick`+`cms` keyword pair, `@plone/nick`
+  dependency or `@plone/nick-*` name) so IRC/nickname noise on the bare `nick` keyword
+  is dropped.
 
 ## [1.0.1] - 2026-06-11
 

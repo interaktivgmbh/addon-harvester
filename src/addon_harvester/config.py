@@ -38,15 +38,27 @@ DEFAULT_NPM_QUERIES = (
 )
 
 NPM_VOLTO_PEER = '@plone/volto'
-NPM_AURORA_PEER = '@plone/aurora'
-NPM_NICK_PEER = '@plone/nick'
-NPM_ADDON_PEERS = (NPM_VOLTO_PEER, NPM_AURORA_PEER)
-NPM_ADDON_KEYWORDS = ('volto', 'volto-addon', 'aurora-addon', 'plone-aurora', 'plone')
 
-NPM_NICK_KEYWORD = 'nick-addon'
-NPM_NICK_KEYWORD_PAIR = ('nick', 'cms')
-NPM_NICK_NAME_PREFIX = '@plone/nick'
-NICK_CATEGORY = 'nick'
+# ecosystem markers: a package is kept (and tagged with the ecosystem as category) when
+# any marker matches — substring in name, name prefix, any/all keywords, peer/dependency
+NPM_ECOSYSTEMS: Dict[str, Dict[str, Tuple]] = {
+    'volto': {
+        'name_contains': ('volto',),
+        'keywords_any': ('volto', 'volto-addon'),
+        'peers': (NPM_VOLTO_PEER,),
+    },
+    'aurora': {
+        'keywords_any': ('aurora-addon', 'plone-aurora'),
+        'peers': ('@plone/aurora',),
+    },
+    'nick': {
+        'name_prefixes': ('@plone/nick',),
+        'keywords_any': ('nick-addon',),
+        'keywords_all': (('nick', 'cms'),),
+        'peers': ('@plone/nick',),
+    },
+}
+NPM_GENERIC_KEYWORDS = ('plone',)
 
 GITHUB_GRAPHQL_URL = 'https://api.github.com/graphql'
 GITHUB_TOKEN_ENV = ('GITHUB_TOKEN', 'GH_TOKEN')

@@ -100,50 +100,66 @@ class TestIsFrontendAddon:
         assert not result
 
 
-class TestIsNickAddon:
-    def test_plone_nick_name_prefix_is_kept(self):
+class TestEcosystems:
+    def test_plone_nick_name_prefix_is_nick(self):
         # setup
         packument = {'name': '@plone/nick-blog', 'dist-tags': {'latest': '1.0.0'},
                      'versions': {'1.0.0': {}}}
 
         # do it / postcondition
-        assert NpmNormalizer.is_nick_addon(packument)
+        assert NpmNormalizer.ecosystems(packument) == ['nick']
         assert NpmNormalizer.is_frontend_addon(packument)
 
-    def test_nick_addon_keyword_is_kept(self):
+    def test_nick_addon_keyword_is_nick(self):
         # setup
         packument = {'name': 'community-nick-thing', 'dist-tags': {'latest': '1.0.0'},
                      'versions': {'1.0.0': {'keywords': ['nick-addon']}}}
 
         # do it / postcondition
-        assert NpmNormalizer.is_nick_addon(packument)
+        assert NpmNormalizer.ecosystems(packument) == ['nick']
 
-    def test_nick_plus_cms_keywords_are_kept(self):
+    def test_nick_plus_cms_keywords_are_nick(self):
         # setup
         packument = {'name': 'some-blog', 'dist-tags': {'latest': '1.0.0'},
                      'versions': {'1.0.0': {'keywords': ['nick', 'blog', 'cms']}}}
 
         # do it / postcondition
-        assert NpmNormalizer.is_nick_addon(packument)
+        assert NpmNormalizer.ecosystems(packument) == ['nick']
 
-    def test_nick_peer_dependency_is_kept(self):
+    def test_nick_peer_dependency_is_nick(self):
         # setup
         packument = {'name': 'some-extension', 'dist-tags': {'latest': '1.0.0'},
                      'versions': {'1.0.0': {'peerDependencies': {'@plone/nick': '^1.0.0'}}}}
 
         # do it / postcondition
-        assert NpmNormalizer.is_nick_addon(packument)
+        assert NpmNormalizer.ecosystems(packument) == ['nick']
 
-    def test_irc_nick_package_is_dropped(self):
+    def test_irc_nick_package_matches_nothing(self):
         # setup
         packument = {'name': 'nickserv', 'dist-tags': {'latest': '1.0.0'},
                      'versions': {'1.0.0': {'keywords': ['irc', 'nickserv', 'nick']}}}
 
         # do it / postcondition
-        assert not NpmNormalizer.is_nick_addon(packument)
+        assert NpmNormalizer.ecosystems(packument) == []
         assert not NpmNormalizer.is_frontend_addon(packument)
 
-    def test_normalize_tags_nick_addons_with_the_category(self):
+    def test_volto_addon_is_volto(self):
+        # setup
+        packument = {'name': 'collective-foo', 'dist-tags': {'latest': '1.0.0'},
+                     'versions': {'1.0.0': {'keywords': ['volto-addon']}}}
+
+        # do it / postcondition
+        assert NpmNormalizer.ecosystems(packument) == ['volto']
+
+    def test_aurora_peer_is_aurora(self):
+        # setup
+        packument = {'name': 'collective-bar', 'dist-tags': {'latest': '1.0.0'},
+                     'versions': {'1.0.0': {'peerDependencies': {'@plone/aurora': '^1.0.0'}}}}
+
+        # do it / postcondition
+        assert NpmNormalizer.ecosystems(packument) == ['aurora']
+
+    def test_normalize_uses_ecosystems_as_categories(self):
         # setup
         packument = {'name': '@plone/nick-blog', 'dist-tags': {'latest': '1.0.0'},
                      'versions': {'1.0.0': {'description': 'Blog for Nick', 'keywords': ['nick', 'cms']}},
@@ -155,7 +171,7 @@ class TestIsNickAddon:
         # postcondition
         assert addon['categories'] == ['nick']
 
-    def test_normalize_leaves_volto_addons_uncategorised(self):
+    def test_normalize_tags_volto_addons_with_volto(self):
         # setup
         packument = {'name': '@scope/volto-thing', 'dist-tags': {'latest': '1.0.0'},
                      'versions': {'1.0.0': {'keywords': ['volto-addon']}},
@@ -165,7 +181,7 @@ class TestIsNickAddon:
         addon = NpmNormalizer().normalize(packument)
 
         # postcondition
-        assert addon['categories'] == []
+        assert addon['categories'] == ['volto']
 
 
 class TestPyPINormalize:

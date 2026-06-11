@@ -9,8 +9,8 @@ the Simple index remain as fallbacks.
 The search terms live in `harvest.toml` — point them at any ecosystem
 (`"Framework :: Django"`, `"Framework :: Zope"`, ...). The shipped default is the
 **Plone profile**: `Framework :: Plone` plus npm queries for Volto/Aurora and
-[Nick](https://github.com/plone/nick) add-ons (Nick hits are tagged with the `nick`
-category), with Plone-specific enrichments (version compat, add-on categories,
+[Nick](https://github.com/plone/nick) add-ons (npm hits are tagged with their ecosystem
+as category), with Plone-specific enrichments (version compat, add-on categories,
 backend/frontend pairing) that simply stay empty for other ecosystems.
 
 ## Docker (production, refresh every 4 h)
