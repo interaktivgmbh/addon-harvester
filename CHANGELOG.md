@@ -5,6 +5,19 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-06-11
+
+### Added
+
+- PyPI release workflow (`.github/workflows/release.yml`): pushed `v*` tags run lint and
+  tests, build sdist + wheel and publish to PyPI via Trusted Publishing (OIDC, no API
+  tokens). First release available on PyPI.
+- `CONTRIBUTORS.md`.
+
+### Removed
+
+- The `Private :: Do Not Upload` classifier (the package is now published on PyPI).
+
 ## [1.0.0] - 2026-06-11
 
 First public release.
@@ -40,4 +53,5 @@ First public release.
   service-account key.
 - GitHub Actions CI: ruff lint and the pytest suite (95% coverage, fully offline).
 
+[1.0.1]: https://github.com/interaktivgmbh/addon-harvester/releases/tag/v1.0.1
 [1.0.0]: https://github.com/interaktivgmbh/addon-harvester/releases/tag/v1.0.0

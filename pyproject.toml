@@ -18,7 +18,6 @@ maintainers = [
 ]
 keywords = ["addon", "harvester", "metadata", "PyPI", "npm", "Plone", "Volto", "Aurora"]
 classifiers = [
-    "Private :: Do Not Upload",
     "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
     "Framework :: Plone",
     "Programming Language :: Python",

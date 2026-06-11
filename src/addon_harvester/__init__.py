@@ -8,7 +8,7 @@ from .options import HarvestOptions, config_from_file  # noqa: E402
 from .snapshot import write_snapshot  # noqa: E402
 from .types import TAddon, TCompat, TSnapshot, TStats  # noqa: E402
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 __all__ = [
     'Harvester',
